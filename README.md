@@ -4,15 +4,13 @@
 
 # Prerequisites: Python 3.8+, PostgreSQL.
 # Installation:
-1. Install Python packages: pip install django djangorestframework psycopg2-binary drf-yasg djangorestframework-simplejwt.
-2. Set up PostgreSQL and create a database (e.g., equipment_booking) and user.
-3. Configure the database settings in equipment_booking_project/settings.py.
-4. Run python manage.py migrate to create tables.
-5. Create a superuser for admin: python manage.py createsuperuser.
-6. (Optional) Create groups "Manager" (and "Employee" if desired) in the admin, and assign users to those groups.
-7. Run the server: python manage.py runserver.
-   
-- Postman/Curl: Use the provided endpoints (see below) to interact with the API. Authenticate with basic auth or obtain a JWT if configured.
+1. Clone the repository
+2. pip install -r requirements.txt  
+3. Create DB and user
+4. Run migrations and start
+python manage.py migrate
+python manage.py createsuperuser  # creates Admin
+python manage.py runserver
 
 ## API Endpoints Documentation
 
@@ -30,15 +28,11 @@
     - GET /api/bookings/{id}/ – Retrieve Booking. Allowed if the booking belongs to the user or the user is Manager/Admin.
     - PUT/PATCH /api/bookings/{id}/ – Update Booking. (Not heavily tested in our implementation. By default, it would allow changing times or quantity. We recommend caution or extending validation to handle updates similar to creation to avoid introducing conflicts.)
     - DELETE /api/bookings/{id}/ – Cancel Booking. Allowed if Admin/Manager or the booking's owner. Employees can delete (cancel) only their own bookings. This will permanently delete the booking record in our setup. (Optionally, one could mark it as canceled instead.)
-3. Auth:
-   - POST /api/token/ – (If JWT enabled) Obtain JWT token pair. Supply JSON {"username": "user", "password": "pass"}.
-   - POST /api/token/refresh/ – Refresh JWT token.
-    Django's session auth login can be done via the admin site or browsable API login form.
-4. Documentation:
+
+3. Documentation:
     - GET /swagger/ – Swagger UI and OpenAPI docs for all endpoints (development use).
-5. Bonus (if enabled):
+4. Bonus :
     - GET /api/availability/?start=<start_datetime>&end=<end_datetime> – Returns equipment availability within the given range. (Requires enabling the view as described in the code comments.)
-    - Recurring booking fields (recurrence_interval, recurrence_count) in booking creation can be enabled to allow creating multiple bookings in one request.
 
 ## Assumptions & Notes
 
@@ -60,6 +54,7 @@
 4. API Documentation: Interactive docs via Swagger UI.
 
 - Bonus Features
-1. Recurring Bookings: Code structure is prepared to handle recurring bookings in the future. With minor modifications (adding fields and logic as commented in code), the system can create multiple bookings in one go for a recurring event.
-2. Advanced Availability: We sketched an endpoint to query availability of equipment for a given time range. This can help users pick an open slot or see how many items are free. Further enhancements could include a calendar view or a report of availability per day/week which would build on this logic.
-3. Reporting: While not implemented, the data model supports deriving reports like "most booked equipment" (simply count bookings per equipment) or "usage stats per type" (e.g., total hours booked per equipment type). These could be added as additional endpoints or admin reports.
+🔄 Recurring bookings logic (loop with time delta)
+📆 Equipment availability endpoint
+📈 Foundation for reports: most-booked equipment, usage hours, etc.
+🧪 Swagger-based interactive testing
